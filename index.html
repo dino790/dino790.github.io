@@ -180,6 +180,7 @@
       grid-template-columns: repeat(3, minmax(0, 1fr));
       grid-template-rows: repeat(2, minmax(0, 1fr));
       gap: 12px;
+      max-height: 560px;
     }
     .wrap { gap: 10px; padding: calc(12px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left)); }
     .bar { grid-template-columns: auto 1fr auto; gap: 10px; }
@@ -189,8 +190,25 @@
     .headline { font-size: 12px; }
   }
   @media (min-width: 760px) and (min-height: 1080px) {
-    .grid { max-height: 780px; }
+    .grid { max-height: 640px; }
   }
+
+  .foot {
+    flex: none;
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 10.5px;
+    line-height: 1.4;
+    color: var(--muted);
+    border-top: 1px solid var(--line);
+    padding-top: 8px;
+  }
+  .foot code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px; }
+  .foot .hint { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  @media (max-height: 520px) { .foot { display: none; } }
   .card {
     position: relative;
     min-width: 0;
@@ -453,6 +471,11 @@
     <div class="skeleton"></div>
     <div class="skeleton"></div>
   </section>
+
+  <footer class="foot">
+    <span><code>data.json</code> 기준 · 한국 표준시(KST)</span>
+    <span class="hint">카드를 누르면 조건·메모·출처가 열립니다</span>
+  </footer>
 </div>
 
 <dialog class="sheet" id="detail" aria-labelledby="d-title">
