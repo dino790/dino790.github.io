@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-17T11:57:00+09:00",
+  "updated_at": "2026-11-17T12:00:00+09:00",
   "updated_by": "Pickle 자동 점검",
   "headline": "감시 6건 모두 가동 중 · 조건 충족 항목 없음 (공공기관 이전 발표 대기 1건)",
   "items": [
@@ -64,10 +64,10 @@
       "id": "daangn-peso",
       "icon": "🇵🇭",
       "title": "필리핀 페소 중고거래",
-      "subtitle": "당근마켓 · 대전 유성구·서구",
+      "subtitle": "당근마켓 · 거주지 인근 직거래",
       "status": "watching",
       "status_label": "감시 중",
-      "condition": "1페소 21원 미만 · 현행권 직거래",
+      "condition": "1페소 21원 미만 · 현행권 직거래(거주지 인근 한정)",
       "latest_value": "조건 충족 없음",
       "latest_label": "신규 후보 0건",
       "observed_at": "2026-11-17T11:50:00+09:00",
