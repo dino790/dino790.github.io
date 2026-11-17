@@ -146,6 +146,7 @@
   .chip.wait { background: var(--wait-soft); border-color: transparent; color: var(--wait); }
   .chip.wait b { color: var(--wait); }
   .stamp { margin-left: auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  @media (max-width: 479px) { .stamp .d { display: none; } }
 
   .headline {
     flex: none;
@@ -477,7 +478,7 @@
       <span class="chip"><b id="s-total">–</b>감시</span>
       <span class="chip hit"><b id="s-hit">–</b>충족</span>
       <span class="chip wait"><b id="s-wait">–</b>대기</span>
-      <span class="stamp" id="updated">확인 중…</span>
+      <span class="stamp"><span class="d" id="updated-date"></span><span id="updated-time">확인 중…</span></span>
     </div>
   </header>
 
@@ -605,7 +606,9 @@
     document.getElementById("s-wait").textContent = waiting;
 
     var updatedText = kstText(data.updated_at);
-    document.getElementById("updated").textContent = updatedText + " 갱신" + (ago(data.updated_at) ? " · " + ago(data.updated_at) : "");
+    var hm = kstText(data.updated_at, false);
+    document.getElementById("updated-date").textContent = updatedText.slice(0, 11);
+    document.getElementById("updated-time").textContent = hm + " 갱신" + (ago(data.updated_at) ? " · " + ago(data.updated_at) : "");
 
     var hl = document.getElementById("headline");
     var txt = data.headline || (hit > 0
