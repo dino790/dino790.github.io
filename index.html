@@ -65,7 +65,7 @@
   .wrap {
     height: 100dvh;
     max-height: 100dvh;
-    max-width: 1120px;
+    max-width: 1240px;
     margin: 0 auto;
     padding: calc(8px + env(safe-area-inset-top)) calc(10px + env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left));
     display: flex;
@@ -191,7 +191,6 @@
   @media (min-width: 760px) and (min-height: 1080px) {
     .grid { max-height: 780px; }
   }
-
   .card {
     position: relative;
     min-width: 0;
@@ -241,7 +240,7 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  .icon { margin-right: 1px; font-size: .95em; }
+  .icon { margin-right: 3px; font-size: .95em; }
   .badge {
     flex: none;
     display: inline-flex;
@@ -261,7 +260,7 @@
   .card[data-status="waiting"] .badge { background: var(--wait-soft); color: var(--wait); }
   .card[data-status="idle"] .badge { background: var(--idle-soft); color: var(--idle); }
 
-  .card-mid { flex: none; min-width: 0; }
+  .card-mid { flex: 1 1 auto; min-height: 0; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
   .value {
     margin: 0;
     font-size: clamp(15px, 1.9vh + 6px, 24px);
