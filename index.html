@@ -170,13 +170,14 @@
     flex: 0 0 auto;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-auto-rows: auto;
+    grid-auto-rows: minmax(176px, auto);
     align-content: start;
     gap: 8px;
   }
   @media (min-width: 760px) {
     .grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-auto-rows: auto;
       gap: 12px;
     }
     .wrap { gap: 10px; padding: calc(12px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left)); }
@@ -339,6 +340,22 @@
   .card-foot .cond { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .card-foot time { flex: none; font-variant-numeric: tabular-nums; }
   .more-hint { flex: none; font-size: 12px; line-height: 1; color: var(--muted); }
+
+  /* 넓은 화면에서만 메모 한 줄까지 표면에 노출 (좁은 화면은 상세 시트에서) */
+  .note { display: none; }
+  @media (min-width: 760px) {
+    .note {
+      margin: 4px 0 0;
+      font-size: 11.5px;
+      line-height: 1.4;
+      color: var(--muted);
+      word-break: keep-all;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  }
 
   /* ── 상태 / 스켈레톤 ─────────────────────── */
   .notice {
@@ -566,6 +583,7 @@
     html += '<div class="card-mid"><p class="value">' + escapeHTML(item.latest_value || "–") + "</p>";
     if (item.latest_label) html += '<p class="label">' + escapeHTML(item.latest_label) + "</p>";
     if (item.gap) html += '<span class="gap">' + escapeHTML(item.gap) + "</span>";
+    if (item.note) html += '<p class="note">' + escapeHTML(item.note) + "</p>";
     html += "</div>";
 
     html += '<div class="card-foot">';
