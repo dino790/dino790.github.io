@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="robots" content="noindex, nofollow" />
-<meta name="theme-color" content="#f5f6f8" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#f4f5f7" media="(prefers-color-scheme: light)" />
 <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)" />
 <title>모니터링 대시보드</title>
 <style>
@@ -23,8 +23,9 @@
     --wait-soft: #fdf3e3;
     --idle: #64748b;
     --idle-soft: #eef1f6;
-    --shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 6px 20px rgba(16, 24, 40, .05);
-    --radius: 16px;
+    --shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 6px 18px rgba(16, 24, 40, .05);
+    --shadow-lg: 0 12px 40px rgba(16, 24, 40, .18);
+    --radius: 14px;
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -42,138 +43,174 @@
       --wait-soft: #2b2115;
       --idle: #96a0b5;
       --idle-soft: #1d2430;
-      --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .35);
+      --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 22px rgba(0, 0, 0, .32);
+      --shadow-lg: 0 14px 44px rgba(0, 0, 0, .55);
     }
   }
   * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
+  html { height: 100%; -webkit-text-size-adjust: 100%; }
   body {
     margin: 0;
+    height: 100%;
+    overflow: hidden;               /* 6카드가 항상 한 화면에 들어오도록 문서 스크롤 제거 */
     background: var(--bg);
     color: var(--text);
     font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
       "Malgun Gothic", "Noto Sans KR", "Segoe UI", Roboto, sans-serif;
-    font-size: 15px;
-    line-height: 1.5;
+    font-size: 14px;
+    line-height: 1.4;
     -webkit-font-smoothing: antialiased;
-    padding: 0 0 44px;
   }
-  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
 
-  /* header */
-  header {
-    padding: 26px 0 18px;
+  .wrap {
+    height: 100dvh;
+    max-height: 100dvh;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: calc(8px + env(safe-area-inset-top)) calc(10px + env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left));
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 12px;
+    flex-direction: column;
+    gap: 8px;
+    overflow: hidden;
+  }
+
+  /* ── 상단 슬림 바 ───────────────────────── */
+  .bar {
+    flex: none;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 4px 8px;
   }
   h1 {
+    grid-column: 1;
+    grid-row: 1;
     margin: 0;
-    font-size: 21px;
+    font-size: 14px;
     font-weight: 800;
     letter-spacing: -.02em;
+    white-space: nowrap;
   }
-  .sub {
-    margin: 5px 0 0;
-    font-size: 13px;
-    color: var(--muted);
-  }
-  .sub b { color: var(--text-2); font-weight: 600; }
+  h1 .mark { color: var(--brand); }
   .refresh {
+    grid-column: 2;
+    grid-row: 1;
     flex: none;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    height: 38px;
-    padding: 0 14px;
+    justify-content: center;
+    gap: 5px;
+    height: 30px;
+    padding: 0 11px;
     border: 1px solid var(--line);
     border-radius: 999px;
     background: var(--card);
     color: var(--text-2);
     font: inherit;
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 11.5px;
+    font-weight: 700;
     cursor: pointer;
-    transition: transform .12s ease, border-color .12s ease, color .12s ease;
+    white-space: nowrap;
   }
   .refresh:hover { border-color: var(--brand); color: var(--brand); }
   .refresh:active { transform: scale(.97); }
-  .refresh .ico { display: inline-block; transition: transform .6s ease; }
+  .refresh .ico { display: inline-block; font-size: 13px; line-height: 1; transition: transform .6s ease; }
   .refresh.loading .ico { animation: spin .9s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* stats */
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin: 4px 0 20px;
-  }
-  .stat {
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 12px 14px;
-    box-shadow: var(--shadow);
-  }
-  .stat .k {
-    display: block;
+  .meta {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    min-width: 0;
     font-size: 11.5px;
-    font-weight: 700;
-    letter-spacing: .02em;
     color: var(--muted);
   }
-  .stat .v {
-    display: block;
-    margin-top: 3px;
-    font-size: 21px;
-    font-weight: 800;
-    letter-spacing: -.02em;
+  .chip {
+    flex: none;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 3px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    font-weight: 600;
+    color: var(--muted);
     font-variant-numeric: tabular-nums;
   }
-  .stat.hit .v { color: var(--ok); }
+  .chip b { font-size: 12px; font-weight: 800; color: var(--text); }
+  .chip.hit { background: var(--ok-soft); border-color: transparent; color: var(--ok); }
+  .chip.hit b { color: var(--ok); }
+  .chip.wait { background: var(--wait-soft); border-color: transparent; color: var(--wait); }
+  .chip.wait b { color: var(--wait); }
+  .stamp { margin-left: auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-variant-numeric: tabular-nums; }
 
   .headline {
-    display: flex;
-    gap: 9px;
-    align-items: flex-start;
-    margin: 0 0 20px;
-    padding: 13px 15px;
-    border-radius: 13px;
-    background: var(--brand-soft);
-    color: var(--text-2);
-    font-size: 13.5px;
-    line-height: 1.45;
-    font-weight: 500;
-  }
-  .headline .dot {
     flex: none;
-    width: 7px; height: 7px;
-    margin-top: 6px;
-    border-radius: 50%;
-    background: var(--brand);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    padding: 0 2px;
+    font-size: 11.5px;
+    line-height: 1.35;
+    color: var(--text-2);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    min-width: 0;
   }
+  .headline .dot { flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--brand); }
+  .headline span:last-child { overflow: hidden; text-overflow: ellipsis; }
 
-  /* cards */
+  /* ── 카드 그리드 (한 화면 6개) ─────────────── */
   .grid {
+    flex: 1 1 auto;
+    min-height: 0;
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+    gap: 8px;
   }
-  @media (min-width: 640px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; } }
-  @media (min-width: 1000px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (min-width: 760px) {
+    .grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .wrap { gap: 10px; padding: calc(12px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left)); }
+    .bar { grid-template-columns: auto 1fr auto; gap: 10px; }
+    h1 { grid-column: 1; grid-row: 1; font-size: 15px; }
+    .refresh { grid-column: 3; grid-row: 1; height: 32px; padding: 0 13px; font-size: 12px; }
+    .meta { grid-column: 2; grid-row: 1; justify-content: flex-end; }
+    .headline { font-size: 12px; }
+  }
+  @media (min-width: 760px) and (min-height: 1080px) {
+    .grid { max-height: 780px; }
+  }
 
   .card {
     position: relative;
+    min-width: 0;
+    min-height: 0;
     display: flex;
     flex-direction: column;
+    gap: 6px;
+    padding: 10px 10px 8px 13px;
     background: var(--card);
     border: 1px solid var(--line);
     border-radius: var(--radius);
-    padding: 16px 16px 14px;
     box-shadow: var(--shadow);
     overflow: hidden;
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    -webkit-tap-highlight-color: transparent;
+    transition: border-color .14s ease, transform .14s ease;
   }
   .card::before {
     content: "";
@@ -181,194 +218,261 @@
     inset: 0 auto 0 0;
     width: 3px;
     background: var(--brand);
-    opacity: .85;
+    opacity: .9;
   }
   .card[data-status="hit"]::before { background: var(--ok); }
   .card[data-status="waiting"]::before { background: var(--wait); }
   .card[data-status="idle"]::before { background: var(--idle); }
+  @media (hover: hover) { .card:hover { border-color: var(--brand); } .card:hover .more-hint { color: var(--brand); } }
+  .card:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+  .card:active { transform: scale(.994); }
 
-  .card-top {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 10px;
-  }
-  .name { min-width: 0; }
+  .card-top { flex: none; display: flex; align-items: flex-start; justify-content: space-between; gap: 5px; }
   .title {
     margin: 0;
-    font-size: 15.5px;
+    min-width: 0;
+    font-size: clamp(12.5px, 1.1vh + 7px, 15px);
     font-weight: 750;
     letter-spacing: -.01em;
-    line-height: 1.3;
+    line-height: 1.28;
     word-break: keep-all;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
-  .icon { margin-right: 2px; }
-  .subtitle {
-    margin: 3px 0 0;
-    font-size: 12.5px;
-    color: var(--muted);
-    word-break: keep-all;
-  }
+  .icon { margin-right: 1px; font-size: .95em; }
   .badge {
     flex: none;
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 4px 9px;
+    gap: 4px;
+    padding: 2px 6px;
     border-radius: 999px;
-    font-size: 11.5px;
-    font-weight: 700;
+    font-size: clamp(9.5px, .8vh + 3px, 11px);
+    font-weight: 800;
+    line-height: 1.35;
     white-space: nowrap;
     background: var(--brand-soft);
     color: var(--brand);
   }
-  .badge::before {
-    content: "";
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: currentColor;
-  }
+  .badge::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
   .card[data-status="hit"] .badge { background: var(--ok-soft); color: var(--ok); }
   .card[data-status="waiting"] .badge { background: var(--wait-soft); color: var(--wait); }
   .card[data-status="idle"] .badge { background: var(--idle-soft); color: var(--idle); }
 
-  .field {
-    margin-top: 14px;
-    padding-top: 12px;
-    border-top: 1px dashed var(--line);
-  }
-  .field.first { margin-top: 13px; border-top: 0; padding-top: 0; }
-  .k {
-    display: block;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: .03em;
-    color: var(--muted);
-    text-transform: uppercase;
-  }
-  .condition {
-    margin: 4px 0 0;
-    font-size: 13.5px;
-    font-weight: 600;
-    color: var(--text);
-    word-break: keep-all;
-  }
+  .card-mid { flex: none; min-width: 0; }
   .value {
-    margin: 4px 0 0;
-    font-size: 19px;
+    margin: 0;
+    font-size: clamp(15px, 1.9vh + 6px, 24px);
     font-weight: 800;
-    letter-spacing: -.02em;
-    font-variant-numeric: tabular-nums;
+    letter-spacing: -.03em;
+    line-height: 1.2;
     color: var(--text);
+    font-variant-numeric: tabular-nums;
     word-break: keep-all;
+    overflow-wrap: anywhere;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
   .card[data-status="hit"] .value { color: var(--ok); }
-  .value-label {
-    margin: 3px 0 0;
-    font-size: 12.5px;
+  .label {
+    margin: 2px 0 0;
+    font-size: clamp(10.5px, .75vh + 6px, 12.5px);
+    line-height: 1.35;
     color: var(--text-2);
     word-break: keep-all;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
   .gap {
     display: inline-block;
-    margin-top: 8px;
-    padding: 3px 8px;
-    border-radius: 7px;
+    margin-top: 4px;
+    padding: 1px 6px;
+    border-radius: 5px;
     background: var(--idle-soft);
     color: var(--text-2);
-    font-size: 11.5px;
+    font-size: 10.5px;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
-  }
-  .note {
-    margin: 10px 0 0;
-    font-size: 12.5px;
-    line-height: 1.5;
-    color: var(--text-2);
-    word-break: keep-all;
-  }
-  .card-foot {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    margin-top: auto;
-    padding-top: 12px;
-    font-size: 11.5px;
-    color: var(--muted);
-  }
-  .card-foot .src {
+    max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .card-foot time { flex: none; font-variant-numeric: tabular-nums; }
 
-  /* states */
+  .card-foot {
+    flex: none;
+    margin-top: auto;
+    padding-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10.5px;
+    color: var(--muted);
+    min-width: 0;
+  }
+  .card-foot .cond { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .card-foot time { flex: none; font-variant-numeric: tabular-nums; }
+  .more-hint { flex: none; font-size: 12px; line-height: 1; color: var(--muted); }
+
+  /* ── 상태 / 스켈레톤 ─────────────────────── */
   .notice {
-    padding: 28px 18px;
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 18px;
     text-align: center;
     color: var(--muted);
-    font-size: 13.5px;
+    font-size: 13px;
     background: var(--card);
     border: 1px solid var(--line);
     border-radius: var(--radius);
+    overflow: auto;
   }
-  .notice strong { display: block; margin-bottom: 6px; color: var(--text); font-size: 14.5px; }
-  .notice code {
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 12px;
-    background: var(--idle-soft);
-    padding: 2px 6px;
-    border-radius: 5px;
+  .notice strong { display: block; margin-bottom: 5px; color: var(--text); font-size: 14px; }
+  .notice code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; }
+  .skeleton {
+    min-height: 0;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    animation: pulse 1.4s ease-in-out infinite;
   }
-  footer {
-    margin-top: 26px;
-    padding-top: 16px;
-    border-top: 1px solid var(--line);
-    font-size: 11.5px;
-    line-height: 1.7;
-    color: var(--muted);
+  @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: .5 } }
+
+  /* ── 상세 시트/모달 ──────────────────────── */
+  dialog.sheet {
+    position: fixed;
+    inset: auto 0 0 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    width: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    color: var(--text);
   }
-  footer code {
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 11px;
+  dialog.sheet::backdrop { background: rgba(8, 12, 20, .48); }
+  .sheet-box {
+    position: relative;
+    max-height: 88dvh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--card);
+    border-radius: 18px 18px 0 0;
+    padding: 14px 16px calc(16px + env(safe-area-inset-bottom));
+    box-shadow: var(--shadow-lg);
+    animation: sheetIn .18s ease-out;
   }
-  .skeleton { min-height: 190px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); animation: pulse 1.4s ease-in-out infinite; }
-  @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: .55 } }
+  @keyframes sheetIn { from { transform: translateY(18px); opacity: .6 } to { transform: none; opacity: 1 } }
+  .sheet-grab { width: 36px; height: 4px; border-radius: 999px; background: var(--line); margin: 0 auto 12px; }
+  .sheet-head { display: flex; align-items: flex-start; gap: 8px; }
+  .sheet-head h2 {
+    margin: 0;
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -.01em;
+    line-height: 1.3;
+    word-break: keep-all;
+  }
+  .sheet-close {
+    flex: none;
+    width: 30px; height: 30px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: var(--card);
+    color: var(--text-2);
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .sheet-close:hover { border-color: var(--brand); color: var(--brand); }
+  .sheet-sub { margin: 4px 0 0; font-size: 12px; color: var(--muted); word-break: keep-all; }
+  .sheet-badge-row { margin-top: 10px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .sheet-badge-row .badge { font-size: 11.5px; padding: 3px 9px; }
+  .sheet-badge-row[data-status="hit"] .badge { background: var(--ok-soft); color: var(--ok); }
+  .sheet-badge-row[data-status="waiting"] .badge { background: var(--wait-soft); color: var(--wait); }
+  .sheet-badge-row[data-status="idle"] .badge { background: var(--idle-soft); color: var(--idle); }
+  .updated-note { font-size: 11px; color: var(--muted); }
+  .rows { margin: 12px 0 0; border-top: 1px solid var(--line); }
+  .row { display: grid; grid-template-columns: 74px 1fr; gap: 8px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+  .row dt { margin: 0; font-size: 11px; font-weight: 800; letter-spacing: .02em; color: var(--muted); padding-top: 2px; }
+  .row dd { margin: 0; font-size: 13px; line-height: 1.45; color: var(--text); word-break: keep-all; overflow-wrap: anywhere; }
+  .row dd.big { font-size: 19px; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .row dd .small { display: block; margin-top: 2px; font-size: 12px; font-weight: 500; color: var(--text-2); }
+  .row dd a { color: var(--brand); font-weight: 600; text-decoration: none; word-break: break-all; }
+  .row dd a:hover { text-decoration: underline; }
+  .sheet-foot { margin-top: 12px; font-size: 11px; line-height: 1.6; color: var(--muted); }
+  .sheet-foot code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10.5px; }
+
+  @media (min-width: 640px) {
+    dialog.sheet { inset: 0; margin: auto; max-width: 460px; max-height: 84dvh; }
+    .sheet-box { border-radius: 18px; max-height: 84dvh; padding: 18px 20px 18px; }
+    .sheet-grab { display: none; }
+    .row { grid-template-columns: 88px 1fr; }
+  }
+
+  /* 아주 낮은 화면(가로 모드 등): 장식 최소화 */
+  @media (max-height: 480px) {
+    .headline { display: none; }
+    .card { gap: 3px; padding: 7px 8px 6px 11px; }
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <div>
-      <h1>모니터링 대시보드</h1>
-      <p class="sub">데이터 갱신 <b id="updated">확인 중…</b></p>
-    </div>
+  <header class="bar">
+    <h1><span class="mark" aria-hidden="true">◉</span> 모니터링</h1>
     <button class="refresh" id="refresh" type="button" aria-label="새로고침">
       <span class="ico" aria-hidden="true">↻</span><span>새로고침</span>
     </button>
+    <div class="meta">
+      <span class="chip"><b id="s-total">–</b>감시</span>
+      <span class="chip hit"><b id="s-hit">–</b>충족</span>
+      <span class="chip wait"><b id="s-wait">–</b>대기</span>
+      <span class="stamp" id="updated">확인 중…</span>
+    </div>
   </header>
-
-  <section class="stats" id="stats" aria-label="요약">
-    <div class="stat"><span class="k">감시 항목</span><span class="v" id="s-total">–</span></div>
-    <div class="stat hit"><span class="k">조건 충족</span><span class="v" id="s-hit">–</span></div>
-    <div class="stat"><span class="k">감시 중</span><span class="v" id="s-live">–</span></div>
-  </section>
 
   <p class="headline" id="headline" hidden><span class="dot" aria-hidden="true"></span><span id="headline-text"></span></p>
 
-  <section class="grid" id="grid" aria-live="polite">
+  <section class="grid" id="grid" aria-live="polite" aria-label="감시 항목">
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
     <div class="skeleton"></div>
     <div class="skeleton"></div>
     <div class="skeleton"></div>
   </section>
-
-  <footer>
-    <div id="foot-updated">데이터 파일 <code>data.json</code> 기준 · 표시 시간 한국 표준시(KST)</div>
-    <div>조건에 맞는 항목이 확인되면 별도 알림으로 정리됩니다. 이 화면은 상태 확인용입니다.</div>
-  </footer>
 </div>
+
+<dialog class="sheet" id="detail" aria-labelledby="d-title">
+  <div class="sheet-box">
+    <div class="sheet-grab" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <h2 id="d-title">–</h2>
+      <button class="sheet-close" type="button" id="d-close" aria-label="닫기">✕</button>
+    </div>
+    <p class="sheet-sub" id="d-sub"></p>
+    <div class="sheet-badge-row">
+      <span class="badge" id="d-badge">–</span>
+      <span class="updated-note" id="d-observed"></span>
+    </div>
+    <dl class="rows" id="d-rows"></dl>
+    <p class="sheet-foot">데이터 파일 <code>data.json</code> 기준 · 표시 시간 한국 표준시(KST)<br>
+      조건에 맞는 항목이 확인되면 별도 알림으로 정리됩니다. 이 화면은 상태 확인용입니다.</p>
+  </div>
+</dialog>
 
 <script>
 (function () {
@@ -377,7 +481,9 @@
   var DATA_URL = "data.json";
   var REFRESH_MS = 5 * 60 * 1000;
   var grid = document.getElementById("grid");
-  var errBox = null;
+  var items = [];
+  var dialog = document.getElementById("detail");
+  var returnFocus = null;
 
   function pad(n) { return n < 10 ? "0" + n : "" + n; }
 
@@ -406,10 +512,11 @@
     return Math.floor(min / 1440) + "일 전";
   }
 
-  function esc(s) {
+  // XSS 방지: 모든 데이터는 이 함수를 거쳐 텍스트로만 삽입
+  function escapeHTML(s) {
     return String(s == null ? "" : s)
       .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   }
 
   function statusOf(item) {
@@ -417,51 +524,52 @@
     return ["hit", "watching", "waiting", "idle"].indexOf(s) >= 0 ? s : "watching";
   }
 
-  function cardHTML(item) {
+  function safeURL(u) {
+    var s = String(u || "").trim();
+    return /^https?:\/\//i.test(s) ? s : "";
+  }
+
+  function cardHTML(item, idx) {
     var st = statusOf(item);
-    var html = '<article class="card" data-status="' + st + '">';
-    html += '<div class="card-top"><div class="name">';
-    html += '<h2 class="title">' + (item.icon ? '<span class="icon" aria-hidden="true">' + esc(item.icon) + "</span>" : "") + esc(item.title) + "</h2>";
-    if (item.subtitle) html += '<p class="subtitle">' + esc(item.subtitle) + "</p>";
-    html += "</div><span class=\"badge\">" + esc(item.status_label || "감시 중") + "</span></div>";
+    var html = '<article class="card" role="button" tabindex="0" aria-haspopup="dialog" data-status="' + st + '" data-idx="' + idx + '" aria-label="' +
+      escapeHTML((item.title || "감시 항목") + " 상세 보기") + '">';
+    html += '<div class="card-top"><h2 class="title">' +
+      (item.icon ? '<span class="icon" aria-hidden="true">' + escapeHTML(item.icon) + "</span>" : "") +
+      escapeHTML(item.title) + "</h2>";
+    html += '<span class="badge">' + escapeHTML(item.status_label || "감시 중") + "</span></div>";
 
-    html += '<div class="field first"><span class="k">목표 조건</span><p class="condition">' + esc(item.condition || "–") + "</p></div>";
-
-    html += '<div class="field"><span class="k">최근 확인</span>';
-    html += '<p class="value">' + esc(item.latest_value || "–") + "</p>";
-    if (item.latest_label) html += '<p class="value-label">' + esc(item.latest_label) + "</p>";
-    if (item.gap) html += '<span class="gap">' + esc(item.gap) + "</span>";
+    html += '<div class="card-mid"><p class="value">' + escapeHTML(item.latest_value || "–") + "</p>";
+    if (item.latest_label) html += '<p class="label">' + escapeHTML(item.latest_label) + "</p>";
+    if (item.gap) html += '<span class="gap">' + escapeHTML(item.gap) + "</span>";
     html += "</div>";
 
-    if (item.note) html += '<p class="note">' + esc(item.note) + "</p>";
-
-    html += '<div class="card-foot"><span class="src">' + esc(item.source || "") + "</span>";
-    html += '<time datetime="' + esc(item.observed_at || "") + '" title="' + esc(kstText(item.observed_at)) + '">' +
-      esc(kstText(item.observed_at, false)) + "</time></div>";
+    html += '<div class="card-foot">';
+    html += '<span class="cond">' + escapeHTML(item.condition || "") + "</span>";
+    html += '<time datetime="' + escapeHTML(item.observed_at || "") + '" title="마지막 확인 ' + escapeHTML(kstText(item.observed_at)) + ' KST">' +
+      escapeHTML(kstText(item.observed_at, false)) + "</time>";
+    html += '<span class="more-hint" aria-hidden="true">›</span></div>';
     html += "</article>";
     return html;
   }
 
   function render(data) {
-    var items = (data && data.items) || [];
+    items = (data && data.items) || [];
     var hit = items.filter(function (i) { return statusOf(i) === "hit"; }).length;
     var waiting = items.filter(function (i) { return statusOf(i) === "waiting"; }).length;
-    var live = items.length - hit;
 
     document.getElementById("s-total").textContent = items.length;
     document.getElementById("s-hit").textContent = hit;
-    document.getElementById("s-live").textContent = live;
+    document.getElementById("s-wait").textContent = waiting;
 
     var updatedText = kstText(data.updated_at);
-    document.getElementById("updated").textContent = updatedText + " KST" + (ago(data.updated_at) ? " (" + ago(data.updated_at) + ")" : "");
-    document.getElementById("foot-updated").innerHTML =
-      '데이터 파일 <code>data.json</code> 기준 · 갱신 ' + esc(updatedText) + " KST · 표시 시간 한국 표준시(KST)";
+    document.getElementById("updated").textContent = updatedText + " 갱신" + (ago(data.updated_at) ? " · " + ago(data.updated_at) : "");
 
     var hl = document.getElementById("headline");
     var txt = data.headline || (hit > 0
       ? "조건을 충족한 항목이 " + hit + "건 있습니다."
       : "감시 " + items.length + "건 모두 가동 중 · 조건 충족 알림 없음" + (waiting ? " (발표 대기 " + waiting + "건)" : ""));
     document.getElementById("headline-text").textContent = txt;
+    hl.title = txt;
     hl.hidden = false;
 
     if (!items.length) {
@@ -471,16 +579,84 @@
     grid.innerHTML = items.map(cardHTML).join("");
   }
 
+  /* ── 상세 시트 ───────────────────────────── */
+  function openDetail(idx) {
+    var item = items[idx];
+    if (!item) return;
+    var st = statusOf(item);
+    var badge = document.getElementById("d-badge");
+    badge.textContent = item.status_label || "감시 중";
+    document.getElementById("d-title").textContent =
+      (item.icon ? item.icon + " " : "") + (item.title || "감시 항목");
+    var sub = document.getElementById("d-sub");
+    sub.textContent = item.subtitle || "";
+    sub.hidden = !item.subtitle;
+    document.getElementById("d-observed").textContent =
+      "마지막 확인 " + kstText(item.observed_at) + (ago(item.observed_at) ? " · " + ago(item.observed_at) : "");
+
+    var rows = "";
+    rows += '<div class="row"><dt>목표 조건</dt><dd>' + escapeHTML(item.condition || "–") + "</dd></div>";
+    rows += '<div class="row"><dt>최근 확인</dt><dd class="big">' + escapeHTML(item.latest_value || "–") +
+      (item.latest_label ? '<span class="small">' + escapeHTML(item.latest_label) + "</span>" : "") + "</dd></div>";
+    if (item.gap) rows += '<div class="row"><dt>목표 격차</dt><dd>' + escapeHTML(item.gap) + "</dd></div>";
+    if (item.note) rows += '<div class="row"><dt>메모</dt><dd>' + escapeHTML(item.note) + "</dd></div>";
+    var url = safeURL(item.link || item.url);
+    var src = escapeHTML(item.source || "–");
+    rows += '<div class="row"><dt>출처</dt><dd>' + (url
+      ? '<a href="' + escapeHTML(url) + '" target="_blank" rel="noopener noreferrer nofollow">' + src + " ↗</a>"
+      : src) + "</dd></div>";
+    rows += '<div class="row"><dt>확인 시각</dt><dd>' + escapeHTML(kstText(item.observed_at)) + " KST</dd></div>";
+    document.getElementById("d-rows").innerHTML = rows;
+
+    badge.parentNode.setAttribute("data-status", st);
+    if (typeof dialog.showModal === "function") dialog.showModal();
+    else dialog.setAttribute("open", "");
+  }
+
+  function closeDetail() {
+    if (typeof dialog.close === "function") dialog.close();
+    else dialog.removeAttribute("open");
+    if (returnFocus && returnFocus.focus) returnFocus.focus();
+  }
+
+  grid.addEventListener("click", function (e) {
+    var card = e.target.closest ? e.target.closest(".card") : null;
+    if (!card) return;
+    returnFocus = card;
+    openDetail(parseInt(card.getAttribute("data-idx"), 10));
+  });
+  grid.addEventListener("keydown", function (e) {
+    if (e.key !== "Enter" && e.key !== " " && e.key !== "Spacebar") return;
+    var card = e.target.closest ? e.target.closest(".card") : null;
+    if (!card) return;
+    e.preventDefault();
+    returnFocus = card;
+    openDetail(parseInt(card.getAttribute("data-idx"), 10));
+  });
+  document.getElementById("d-close").addEventListener("click", closeDetail);
+  dialog.addEventListener("click", function (e) {
+    if (e.target === dialog) closeDetail();   // 바깥(백드롭) 탭으로 닫기
+  });
+  dialog.addEventListener("close", function () {
+    if (returnFocus && returnFocus.focus) returnFocus.focus();
+  });
+
+  /* ── 데이터 로드 ─────────────────────────── */
   function showError(msg) {
     var box = document.getElementById("load-error");
     if (!box) {
       box = document.createElement("div");
       box.id = "load-error";
       box.className = "notice";
-      box.style.marginTop = "14px";
-      grid.parentNode.insertBefore(box, grid.nextSibling);
+      box.style.position = "fixed";
+      box.style.left = "50%";
+      box.style.bottom = "16px";
+      box.style.transform = "translateX(-50%)";
+      box.style.width = "min(92vw, 420px)";
+      box.style.boxShadow = "var(--shadow-lg)";
+      document.body.appendChild(box);
     }
-    box.innerHTML = "<strong>데이터를 불러오지 못했습니다</strong>" + esc(msg) +
+    box.innerHTML = "<strong>데이터를 불러오지 못했습니다</strong>" + escapeHTML(msg) +
       "<br>잠시 후 <b>새로고침</b>을 눌러 주세요.";
   }
 
@@ -507,8 +683,7 @@
         render(data);
       })
       .catch(function (e) {
-        if (manual) showError(e && e.message ? e.message : "알 수 없는 오류");
-        else if (!document.querySelector(".card")) showError(e && e.message ? e.message : "알 수 없는 오류");
+        if (manual || !document.querySelector(".card")) showError(e && e.message ? e.message : "알 수 없는 오류");
       })
       .then(function () {
         busy = false;
